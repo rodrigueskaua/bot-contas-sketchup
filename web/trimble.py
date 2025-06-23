@@ -50,7 +50,6 @@ def set_password(page, password):
 def skip_passkey(page):
     page.wait_for_selector("#skip_passkey", timeout=60000)
     page.click("#skip_passkey")
-    time.sleep(7)
     page.click("body")
 
 def fill_preferences_and_skip_mfa(page):
