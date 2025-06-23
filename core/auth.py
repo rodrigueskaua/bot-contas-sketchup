@@ -3,15 +3,11 @@ import time
 import re
 
 def extract_code_from_email(text):
-    print("Extraindo código do texto do email...")
-    print(f"Texto recebido para extrair código:\n{text}\n")
     pattern = r"código de verificação.*?é:\s*([\d]{6})"
     match = re.search(pattern, text, re.IGNORECASE | re.DOTALL)
     if match:
-        print(f"Código encontrado: {match.group(1)}")
         return match.group(1)
     else:
-        print("Nenhum código encontrado no texto.")
         return None
 
 def wait_for_verification_code(token, timeout_seconds=60):
