@@ -1,4 +1,5 @@
 from rich.console import Console
+from rich.console import Group
 from rich.panel import Panel
 from rich.align import Align
 from rich.rule import Rule
@@ -16,30 +17,24 @@ from web.trimble import create_trimble_account
 console = Console()
 
 def main():
-    titulo = "[bold blue]Gerador de Contas Trimble[/bold blue]\n"
-    subtitulo = "[italic white]Use o período gratuito de teste do SketchUp por 7 dias[/italic white]"
-    console.print(Panel(Align.center(titulo + subtitulo), style="cyan", border_style="blue"))
-
     with console.status("[bold yellow]Preparando ambiente...[/bold yellow]") as status:
         email_data = create_temp_email()
-        console.log(f"[green]✅ E-mail temporário criado:[/green] {email_data['email']}")
+        log_email = f"[green]✅ E-mail temporário criado:[/green] {email_data['email']}"
         
         name = generate_name()
         password = generate_secure_password()
-        console.log("[green]✅ Nome e senha seguros gerados.[/green]")
-
-    console.print(Rule(style="blue"))
+        log_password = "[green]✅ Email e senha gerados.[/green]"
 
     try:
+        progress_output = []
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             BarColumn(bar_width=40),
             TimeElapsedColumn(),
             console=console,
-            transient=False,
+            transient=True,
         ) as progress:
-
             email, pwd = create_trimble_account(
                 email=email_data["email"],
                 full_name=name,
@@ -49,8 +44,8 @@ def main():
                 progress=progress
             )
 
-        console.print(Rule(style="green", title="[bold]Finalizado[/bold]"))
-        
+        final_rule = Rule(style="green", title="[bold]Finalizado[/bold]")
+
         success_panel = Panel.fit(
             f"[bold green]🎉 Conta criada com sucesso![/bold green]\n\n"
             f"📧 [bold cyan]Email:[/bold cyan] {email}\n"
@@ -60,13 +55,22 @@ def main():
             border_style="magenta",
             padding=(1, 2)
         )
-        console.print(success_panel)
+
+        output_group = Group(
+            log_email,
+            log_password,
+            final_rule,
+            success_panel
+        )
+        console.print(Panel(output_group, border_style="blue", title="[bold]Criação da Conta[/bold]", padding=(1, 2)))
 
     except Exception as e:
-        console.print(Rule(style="bold red"))
-        console.print(f"[bold red]❌ Ocorreu um erro durante a criação da conta:[/bold red]")
+        error_panel = Panel.fit(
+            f"[bold red]❌ Ocorreu um erro durante a criação da conta:[/bold red]\n\n[dim]{str(e)}",
+            border_style="red"
+        )
+        console.print(error_panel)
         console.print_exception(show_locals=False)
-
 
 if __name__ == "__main__":
     main()
