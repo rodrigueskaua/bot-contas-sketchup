@@ -71,6 +71,8 @@ def main():
         )
         console.print(error_panel)
         console.print_exception(show_locals=False)
+    finally:
+        input("\nPressione ENTER para sair...")
 
 if __name__ == "__main__":
     main()
