@@ -15,6 +15,7 @@ def launch_browser(headless, user_agent, viewport, locale):
     return p, browser, context, page
 
 def fill_basic_info(page, email, full_name):
+    time.sleep(5);
     first_name = full_name.split()[0]
     last_name = full_name.split()[-1]
     page.fill("#given_name", first_name)
